@@ -111,7 +111,7 @@ class MainActivity : ComponentActivity() {
                 val openDialog = remember { mutableStateOf(false) }
                 var textfieldSize by remember { mutableStateOf(Size.Zero) }
                 val openModal = remember { mutableStateOf(false) }
-                val total = remember { mutableStateOf("") }
+                val total = remember { mutableStateOf(0) }
 
 
                 OutlinedTextField(
@@ -219,13 +219,13 @@ class MainActivity : ComponentActivity() {
                     onClick = {
 
                         if (selectedOption[0].toString() == "H") {
-                            var kalorias = (655 + (9.6 * peso.toFloat())) + ((1.8 * altura.toFloat()) - (4.7 * edad.toInt()))
-                            total.value = (kalorias * factor).toString()
+                            var kalorias = (655 + (9.6 * peso.toFloat())) + ((1.8 * altura.toDouble()) - (4.7 * edad.toInt()))
+                            total.value = (kalorias * factor).toInt()
                             openModal.value = true
                         }
                         if (selectedOption[0].toString() == "M") {
-                            var kalorias = (655 + (13.7 * peso.toFloat())) + ((5 * altura.toFloat()) - (6.8 * edad.toInt()))
-                            total.value = (kalorias * factor).toString()
+                            var kalorias = (655 + (13.7 * peso.toDouble())) + ((5 * altura.toDouble()) - (6.8 * edad.toInt()))
+                            total.value = (kalorias * factor).toInt()
                             openModal.value = true
                         }
                     },
@@ -263,7 +263,7 @@ class MainActivity : ComponentActivity() {
                                 val icons = Icons.Filled
                                 ListItem(
                                     text = { Text("Poca actividad") },
-                                    secondaryText = { Text("Ejercicio 1 a 3 veces por semana") },
+                                    secondaryText = { Text( "Ejercicio 1 a 3 veces por semana") },
                                     trailing = {
                                         Icon(
                                             painterResource(R.drawable.outline_sentiment_dissatisfied_24),
@@ -316,8 +316,6 @@ class MainActivity : ComponentActivity() {
                     )
                 }
 
-
-
                 if (openModal.value) {
                     AlertDialog(
                         onDismissRequest = {
@@ -330,9 +328,16 @@ class MainActivity : ComponentActivity() {
                             Text(text = "Resultado")
                         },
                         text = {
+                            val altura2 = altura.toFloat() / 100
+                            val imc = peso.toFloat() / (altura2 * altura2)
+                            val pesoaprox = ((altura.toFloat() - 140) * 0.91) + 50
+                            val pesoaproxmin = ((altura.toFloat() - 140) * 0.91) + 40
+
                             Text(
-                                "Hola, según nuestros calculos con sus datos ingresados ustede "+
-                                      "debeía consumir aproximadamente " + total.value.toString() + " kalorias para mantener su peso actual"
+                                "Consumir aproximadamente " + total.value.toString() + " kalorias para mantener su peso actual\n" +
+                                        "Tu IMC es: " +  imc.toInt() + "\n" +
+                                        "Tu peso ideal maximo aproximado es: " + pesoaprox + "\n"+
+                                        "Tu peso ideal minimo es: " + pesoaproxmin
                             )
                         },
                         confirmButton = {
